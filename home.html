@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Секретный дневник</title>
+  <style>
+    body > header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Секретный дневник</h1>
+    <nav id="signed-out-nav">
+      <a href="login.html" id="sign-in">Авторизироваться</a> или
+      <a href="register.html">Зарегистрироваться</a>
+    </nav>
+    <nav id="signed-in-nav" hidden>
+      <span>Я автризирован</span> 
+      <button type="button" id="sign-out">Вылогиниться</button> 
+    </nav>
+  </header>
+
+  <script>
+    if (window.PasswordCredential) {
+      const signedOutNav = document.getElementById('signed-out-nav');
+      const signedInNav = document.getElementById('signed-in-nav');
+      const namePlaceHolder = signedInNav.querySelector('span');
+
+      const getCredential = async (mediation) => {
+        const credential = await navigator.credentials.get({
+          password: true,
+          mediation,
+        });
+        console.log(credential);
+        const isCredential = credential !== null;
+        if (isCredential) {
+          // Авторизироваться
+          namePlaceHolder.innerText = credential.name || credential.id;
+          signedOutNav.setAttribute('hidden', true);
+          signedInNav.removeAttribute('hidden');
+        }
+        return isCredential;
+      }
+
+      const signInHandler = async (event) => {
+        event.preventDefault();
+        const href = event.currentTarget.getAttribute('href');
+        const result = await getCredential('optional');
+        if (!result) window.location.href = href;
+      }
+
+      const signOutHandler = () => {
+        navigator.credentials.preventSilentAccess();
+        signedOutNav.removeAttribute('hidden');
+        signedInNav.setAttribute('hidden', true);
+      }
+
+      getCredential('silent');
+
+      const signIn = document.getElementById('sign-in');
+      signIn?.addEventListener('click', signInHandler);
+
+      const signOut = document.getElementById('sign-out');
+      signOut?.addEventListener('click', signOutHandler);
+    }
+  </script>
+</body>
+</html>

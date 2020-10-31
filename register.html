@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Регистрация | Секретный дневник</title>
+  <style>
+    form legend p {
+      margin: 0;
+      padding: 0;
+    }
+    form legend h2 {
+      margin: 0;
+      padding: 0;
+    }
+
+    form fieldset {
+      margin-top: 24px;
+      margin-bottom: 24px;
+    }
+
+    form label {
+      margin: 24px 0;
+      display: block;
+    } 
+
+    form label small,
+    form label input {
+      display: block;
+    }
+
+    body > header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1><a href="home.html">Секретный дневник</a></h1>
+    <nav id="signed-out-nav">
+      <a href="login.html" id="sign-in">Авторизироваться</a>
+    </nav>
+    <nav id="signed-in-nav" hidden>
+      <span>Я автризирован</span> 
+      <button type="button" id="sign-out">Вылогиниться</button> 
+    </nav>
+  </header>
+
+  <form action="./home.html" method="POST">
+    <fieldset>
+      <legend>
+        <h2>Регистрация</h2>
+        <p>Это нужно, что бы доступ к вашим личным заметкам был только у вас.</p>
+      </legend>
+
+      <label>
+        Имя:
+        <small>Это вовсе не обязательно, но сделает работу с сервисом более приятной.</small>
+        <input 
+          name="name" 
+          placeholder="Ольга" 
+          type="text" 
+          autocomplete="name" 
+          autocorrect="off"
+          spellcheck="false"
+          value="">
+      </label>
+
+      <label>
+        Адрес электронной почты:
+        <small>Мы никому его не скажем и не будем присылать вам никаких писем без разрешения.</small>
+        <input 
+          name="email" 
+          placeholder="writer@gmail.com" 
+          inputmode="email" 
+          type="email" 
+          autocomplete="email username" 
+          autocorrect="off"
+          spellcheck="false"
+          autocapitalize="none"
+          autofocus
+          required
+          value="">
+      </label>
+
+      <label>
+        Пароль:
+        <small>Можете написать не слово, а фразу. Надежнее и запомнить легче.</small>
+        <input 
+          name="new-password"
+          type="password"
+          autocomplete="new-password"
+          placeholder="Бабель это не Бебель"
+          autocorrect="off"
+          spellcheck="false"
+          autocapitalize="none"
+          required
+          value="">
+      </label>
+
+    </fieldset>
+    <button type="submit">Зарегистрироваться</button>
+  </form>
+
+  <script>
+    const form = document.querySelector('form');
+    const button = form.querySelector('button');
+    const submitHandler = async (event) => {
+      event.preventDefault();
+      const data = new FormData(event.currentTarget);
+      if (window.PasswordCredential) {
+        const credential = await navigator.credentials.create({
+          password: event.currentTarget
+        });
+        // const credential = await navigator.credentials.create({
+        //   password: {
+        //     id: data.get('email'),
+        //     name: data.get('name'),
+        //     password: data.get('new-password'),
+        //     iconURL: 'https://uc54620b3090128ef312aa39040e.previews.dropboxusercontent.com/p/thumb/AA-vJwrAxiSKqlbaoHhMQx3AMwscoVGbDu5S8VA_ntUKdNOgr0i9X3VyGJFFOxJuXI6eseGNQwrhbeHwve0eUTt9FZinFC2Rk33D2oiNYC1_CoLA8QS0NVCM6WX8oLu8tRZvV1n0sdiu6NW52Ttt_Lcg_HzlhsYAHx93poMV8rpLHQZOA63Lj4cWp-Y_xMjgcHoxtlMPgDbP6aaDfawn3bwBziSCTcSKtjmzURO50vbm0zm8DmdJmaa9pW1vhXu51Wft1DdspEwlHk6mZ2WgLoIozBRZLO-zoliKYBaCxtuCAqZt9y2tJ3mVFfAWn8Bl5GNCFbfIRG9PRCnbYp93j2SkOMAI0D_KI9kQTPQv-CkGNisVMr8ZJ5IAzVfhv8GpFYTF9JnnBXkzaZn0EhWRhzRu/p.png?fv_content=true&size_mode=5'
+        //   },
+        // });
+        // const credential = new PasswordCredential({
+        //   id: data.get('email'),
+        //   name: data.get('name'),
+        //   password: data.get('new-password'),
+        //   iconURL: 'https://uc54620b3090128ef312aa39040e.previews.dropboxusercontent.com/p/thumb/AA-vJwrAxiSKqlbaoHhMQx3AMwscoVGbDu5S8VA_ntUKdNOgr0i9X3VyGJFFOxJuXI6eseGNQwrhbeHwve0eUTt9FZinFC2Rk33D2oiNYC1_CoLA8QS0NVCM6WX8oLu8tRZvV1n0sdiu6NW52Ttt_Lcg_HzlhsYAHx93poMV8rpLHQZOA63Lj4cWp-Y_xMjgcHoxtlMPgDbP6aaDfawn3bwBziSCTcSKtjmzURO50vbm0zm8DmdJmaa9pW1vhXu51Wft1DdspEwlHk6mZ2WgLoIozBRZLO-zoliKYBaCxtuCAqZt9y2tJ3mVFfAWn8Bl5GNCFbfIRG9PRCnbYp93j2SkOMAI0D_KI9kQTPQv-CkGNisVMr8ZJ5IAzVfhv8GpFYTF9JnnBXkzaZn0EhWRhzRu/p.png?fv_content=true&size_mode=5'
+        // });
+        console.log('before save: ', credential);
+        // Авторизация
+        navigator.credentials.store(credential);
+      }
+    }
+    form.addEventListener('submit', submitHandler);
+  </script>
+
+<script>
+  if (window.PasswordCredential) {
+    const signedOutNav = document.getElementById('signed-out-nav');
+    const signedInNav = document.getElementById('signed-in-nav');
+    const namePlaceHolder = signedInNav?.querySelector('span');
+
+    const getCredential = async (mediation) => {
+      const credential = await navigator.credentials.get({
+        password: true,
+        mediation,
+      });
+      console.log('mediation: ', mediation, 'credential: ', credential );
+      const isCredential = credential !== null;
+      if (isCredential) {
+        // Авторизироваться
+        namePlaceHolder.innerText = credential.name || credential.id;
+        signedOutNav.setAttribute('hidden', true);
+        signedInNav.removeAttribute('hidden');
+      }
+      return isCredential;
+    }
+
+    const signInHandler = async (event) => {
+      event.preventDefault();
+      const href = event.currentTarget.getAttribute('href');
+      const result = await getCredential('optional');
+      if (!result) window.location.href = href;
+    }
+
+    const signOutHandler = () => {
+      navigator.credentials.preventSilentAccess();
+      signedOutNav.removeAttribute('hidden');
+      signedInNav.setAttribute('hidden', true);
+    }
+
+    getCredential('silent');
+
+    const signIn = document.getElementById('sign-in');
+    signIn?.addEventListener('click', signInHandler);
+
+    const signOut = document.getElementById('sign-out');
+    signOut?.addEventListener('click', signOutHandler);
+  }
+</script>
+</body>
+</html>

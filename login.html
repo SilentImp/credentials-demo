@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Авторизация | Секретный дневник</title>
+  <style>
+    form legend p {
+      margin: 0;
+      padding: 0;
+    }
+    form legend h2 {
+      margin: 0;
+      padding: 0;
+    }
+
+    form fieldset {
+      margin-top: 24px;
+      margin-bottom: 24px;
+    }
+
+    form label {
+      margin: 24px 0;
+      display: block;
+    } 
+
+    form label small,
+    form label input {
+      display: block;
+    }
+
+    body > header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1><a href="home.html">Секретный дневник</a></h1>
+    <nav id="signed-out-nav">
+      <a href="register.html">Зарегистрироваться</a>
+    </nav>
+    <nav id="signed-in-nav" hidden>
+      <span>Я автризирован</span> 
+      <button type="button" id="sign-out">Вылогиниться</button> 
+    </nav>
+  </header>
+
+  <form action="home.html" method="GET">
+    <fieldset>
+      <legend>
+        <h2>Авторизация</h2>
+        <p>Это нужно, что бы получить доступ к вашим личным заметкам.</p>
+      </legend>
+
+      <label>
+        Адрес электронной почты:
+        <input 
+          name="email" 
+          placeholder="writer@gmail.com" 
+          inputmode="email" 
+          type="email" 
+          autocomplete="email username" 
+          autocorrect="off"
+          spellcheck="false"
+          autocapitalize="none"
+          autofocus
+          required
+          value="">
+      </label>
+
+      <label>
+        Пароль:
+        <input 
+          name="password"
+          type="password"
+          autocomplete="current-password"
+          placeholder="Бабель это не Бебель"
+          autocorrect="off"
+          spellcheck="false"
+          autocapitalize="none"
+          required
+          value="">
+      </label>
+
+    </fieldset>
+    <button type="submit">Авторизироваться</button>
+  </form>
+
+  <script>
+    const form = document.querySelector('form');
+    const button = form.querySelector('button');
+    const submitHandler = async (event) => {
+      if (window.PasswordCredential) {
+        const credential = new PasswordCredential(event.target);
+        console.log(credential);
+        // Авторизация
+      }
+    }
+    form.addEventListener('submit', submitHandler);
+  </script>
+
+<script>
+  if (window.PasswordCredential) {
+    const signedOutNav = document.getElementById('signed-out-nav');
+    const signedInNav = document.getElementById('signed-in-nav');
+    const namePlaceHolder = signedInNav?.querySelector('span');
+
+    const getCredential = async (mediation) => {
+      const credential = await navigator.credentials.get({
+        password: true,
+        mediation,
+      });
+      console.log(credential);
+      const isCredential = credential !== null;
+      if (isCredential) {
+        // Авторизироваться
+        namePlaceHolder.innerText = credential.name || credential.id;
+        signedOutNav.setAttribute('hidden', true);
+        signedInNav.removeAttribute('hidden');
+      }
+      return isCredential;
+    }
+
+    const signInHandler = async (event) => {
+      event.preventDefault();
+      const href = event.currentTarget.getAttribute('href');
+      const result = await getCredential('optional');
+      if (!result) window.location.href = href;
+    }
+
+    const signOutHandler = () => {
+      navigator.credentials.preventSilentAccess();
+      signedOutNav.removeAttribute('hidden');
+      signedInNav.setAttribute('hidden', true);
+    }
+
+    getCredential('silent');
+
+    const signIn = document.getElementById('sign-in');
+    signIn?.addEventListener('click', signInHandler);
+
+    const signOut = document.getElementById('sign-out');
+    signOut?.addEventListener('click', signOutHandler);
+  }
+</script>
+</body>
+</html>
